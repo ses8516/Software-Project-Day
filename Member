@@ -1,0 +1,10 @@
+/**
+* A class that respresents one of the team members. Able to ask questions and take lunch.
+**/
+
+public class Member{
+
+  public Member(){
+  }
+
+}
