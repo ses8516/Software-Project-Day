@@ -43,5 +43,21 @@ public class Employee extends Thread {
 		
 	}
 	
+	
+	public void run(){
+		if(employeeNumber == 1){
+			runAsTeamLead();
+		}else{
+			runAsEmployee();
+		}
+	}
+	
+	private void runAsTeamLead(){
+		
+	}
+	
+	private void runAsEmployee(){
+		
+	}
 }
 
