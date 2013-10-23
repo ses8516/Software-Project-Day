@@ -22,7 +22,7 @@ public class Manager extends Thread {
 		}
 	}
 	/**
-	 * The manager takes a 1 hour our lunch break 
+	 * The manager takes a 1 hour on lunch break 
 	 */
 	public void lunchBreak(){
 		System.out.println(clock.getTime()+": Manager is on lunch break.");
