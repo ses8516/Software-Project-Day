@@ -3,11 +3,11 @@ import java.util.Random;
 
 public class Manager extends Thread {
 	
-	private Thread time;
+	private final Clock clock;
 	private boolean busy = false;
 	
-	public Manager(Thread time){
-		this.time = time;
+	public Manager(Clock clock){
+		this.clock = clock;
 	}
 	
 	/**

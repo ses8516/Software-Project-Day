@@ -6,10 +6,13 @@ public class Employee extends Thread {
 	// Employee number of 1 means team lead
 	private final int employeeNumber;
 	
-	public Employee(int team, int num){
+	private final Clock clock;
+	
+	public Employee(int team, int num, Clock clock){
 		super(""+team+num);
 		teamNumber = team;
 		employeeNumber = num;
+		this.clock = clock;
 	}
 	
 	/**
