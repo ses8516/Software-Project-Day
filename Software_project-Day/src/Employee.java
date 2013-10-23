@@ -2,6 +2,16 @@ import java.util.Random;
 
 public class Employee extends Thread {
 	
+	private final int teamNumber;
+	// Employee number of 1 means team lead
+	private final int employeeNumber;
+	
+	public Employee(int team, int num){
+		super(""+team+num);
+		teamNumber = team;
+		employeeNumber = num;
+	}
+	
 	/**
 	 * Represents the (class name here) being asked a question. Has a 50%
 	 * chance of being able to answer the question.
