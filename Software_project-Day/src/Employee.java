@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class Employee {
+public class Employee extends Thread {
 	
 	/**
 	 * Represents the (class name here) being asked a question. Has a 50%
