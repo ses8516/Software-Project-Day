@@ -22,7 +22,7 @@ public class Manager extends Thread {
 		}
 	}
 	/**
-	 * The manager takes a 1 hour on lunch break 
+	 * The manager takes an 1 hour lunch break 
 	 */
 	public void lunchBreak(){
 		System.out.println(clock.getTime()+": Manager is on lunch break.");
@@ -100,10 +100,12 @@ public class Manager extends Thread {
 	 */
 	public void run(){
 		busy = true;
-		System.out.println(clock.getTime()+": Manager arrives.");
 		//Manager arrives at 8:00 each day
+		System.out.println(clock.getTime()+": Manager arrives.");
 		//Manager does planning and waits until all team leads arrive in his office
-		//when they arrive, they knock on manger door
+		System.out.println(clock.getTime()+" : Manager conducts planning work as he waits for " +
+							"the team leads to arrive");
+		//When they arrive, they knock on manger door
 		//manager has 15 minute meeting here. standupMeeting()
 		//manager then goes back to doing random stuff
 		//manager can be asked questions that take 10 minutes
