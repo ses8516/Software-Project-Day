@@ -16,7 +16,7 @@ public class Manager extends Thread {
 	public void standupMeeting(){
 		System.out.println(clock.getTime()+": Manager is having a standup meeting.");
 		try {
-			this.wait(150);
+			this.sleep(150);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -27,7 +27,7 @@ public class Manager extends Thread {
 	public void lunchBreak(){
 		System.out.println(clock.getTime()+": Manager is on lunch break.");
 		try {
-			this.wait(600);
+			this.sleep(600);
 		} catch (InterruptedException e) {	
 			e.printStackTrace();
 		}
@@ -39,7 +39,7 @@ public class Manager extends Thread {
 	public void executiveMeeting(){
 		System.out.println(clock.getTime()+": Manager is in an executive meeting.");
 		try {
-			this.wait(600);
+			this.sleep(600);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -52,7 +52,7 @@ public class Manager extends Thread {
 		System.out.println(clock.getTime()+": Manager is conducting a Project Status meeting.");
 		
 		try {
-			this.wait(150);
+			this.sleep(150);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -65,7 +65,7 @@ public class Manager extends Thread {
 		System.out.println(clock.getTime()+": Manager is answering the team lead's question.");
 		
 		try {
-			this.wait(100);
+			this.sleep(100);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -100,19 +100,43 @@ public class Manager extends Thread {
 	 */
 	public void run(){
 		busy = true;
-		System.out.println(clock.getTime()+": Manager arrives.");
-		//Manager arrives at 8:00 each day
-		//Manager does planning and waits until all team leads arrive in his office
-		//when they arrive, they knock on manger door
-		//manager has 15 minute meeting here. standupMeeting()
-		//manager then goes back to doing random stuff
-		//manager can be asked questions that take 10 minutes
-		//at 10:00-11:00 a meeting. executiveMeeting()
-		//if answering question, finish question then have meeting
-		//meeting from 2:00-3:00. exectuiveMeeting()
-		//lunch at 12:00(or closest time to it) to 1:00, lunchBreak()
-		//4:15, status meeting starts, statusMeeting()
-		//manager leaves at 5:00
+		System.out.println(clock.getTime()+": Manager arrives.");	//Manager arrives at 8:00 each day
+		randomStuff(); 												//Manager does planning and waits until all team leads arrive in his office
+																	//when they arrive, they knock on manger door
+		standupMeeting();											//manager has 15 minute meeting here. standupMeeting()
+		//randomStuff();												//manager then goes back to doing random stuff
+		busy = false;
+																	//manager can be asked questions that take 10 minutes
+																	//if answering question, finish question then have meeting
+		if (clock.getTimeMillis() >= 1200 && busy == false){
+			busy = true;
+			executiveMeeting();      								//at 10:00-11:00 a meeting. executiveMeeting()
+			busy = false;
+		}
+		
+												
+		else if (clock.getTimeMillis() >= 3600 && busy == false){
+			busy = true;
+			executiveMeeting();										//meeting from 2:00-3:00. exectuiveMeeting()
+			busy = false;
+		}
+		else if (clock.getTimeMillis() >= 2400 && busy == false ){
+			busy = true;
+			lunchBreak();											//lunch at 12:00(or closest time to it) to 1:00, lunchBreak()
+			busy = false;
+		}
+		else if (clock.getTimeMillis() == 4950)
+		{
+			statusMeeting();										//4:15, status meeting starts, statusMeeting()
+			busy = false;
+		}
+		else if (clock.getTimeMillis() >= 5400){
+			System.out.println(clock.getTime() + ": Manager leaves"); //manager leaves at 5:00
+		}		
+		else{
+			randomStuff();
+			busy = false;
+		}
 	}
 
 
