@@ -44,7 +44,7 @@ public class Employee extends Thread {
 	 * Will check if the Employee is a team lead by checking their employeeNumber.
 	 */
 	public void knockOnDoor(int employeeNumber){
-		if( employeeNumber == 1 )
+		if( employeeNumber == 1 ){}
 			//manager.knockOnDoor(teamNumber);
 	}	
 	
