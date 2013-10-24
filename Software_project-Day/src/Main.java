@@ -6,7 +6,7 @@ public class Main {
 	public static void main(String[] args){
 		Clock clock = new Clock();
 		
-		Manager manager = new Manager(clock);
+		Manager manager = new Manager(clock, 4);
 		
 		
 		ArrayList<Employee> employees = new ArrayList<Employee>(12);
