@@ -24,7 +24,9 @@ public class Manager extends Thread {
 			return false;
 		}
 		try {
-			Thread.currentThread().wait();
+			synchronized(this){
+				Thread.currentThread().wait();
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -35,29 +37,34 @@ public class Manager extends Thread {
 	/**
 	 * A team lead knocks on the Manager's door for the morning meeting. 
 	 */
-	 //Synchronized in case not allowed that multiple team leads can access at the same time.
-	public synchronized void knockOnDoor(int teamNumber){
-		System.out.println(clock.getTime() + "Team Lead " + teamNumber 
+	public void knockOnDoor(int teamNumber){
+		System.out.println(clock.getTime() + " : Team Lead " + teamNumber 
 							+ " has arrived at the morning meeting");
 		numLeads -= 1; //Subtract 1 for number of leads waiting for.
+		try {
+			Thread.currentThread().wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * Manager has a standup meeting for 15 minutes
 	 */
 	public void standUpMeeting(){
-		System.out.println(clock.getTime()+": Manager is having a standup meeting.");
+		System.out.println(clock.getTime()+" : Manager is having a standup meeting.");
 		try {
 			this.sleep(150);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		notifyAll();
 	}
 	/**
 	 * The manager takes a 1 hour on lunch break 
 	 */
 	private void lunchBreak(){
-		System.out.println(clock.getTime()+": Manager is on lunch break.");
+		System.out.println(clock.getTime()+" : Manager is on lunch break.");
 		try {
 			this.sleep(600);
 		} catch (InterruptedException e) {	
@@ -69,7 +76,7 @@ public class Manager extends Thread {
 	 * The manager holds a 1 hour meeting
 	 */
 	private void executiveMeeting(){
-		System.out.println(clock.getTime()+": Manager is in an executive meeting.");
+		System.out.println(clock.getTime()+" : Manager is in an executive meeting.");
 		try {
 			this.sleep(600);
 		} catch (InterruptedException e) {
@@ -81,19 +88,20 @@ public class Manager extends Thread {
 	 * The manager holds a project status meeting for 15 minutes
 	 */
 	private void statusMeeting(){
-		System.out.println(clock.getTime()+": Manager is conducting a Project Status meeting.");
+		System.out.println(clock.getTime()+" : Manager is conducting a Project Status meeting.");
 		try {
 			this.sleep(150);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		notifyAll();
 	}
 	
 	/**
 	 * The manager answers a question for 10 minutes
 	 */
 	private void answerQuestion(){
-		System.out.println(clock.getTime()+": Manager is answering the team lead's question.");
+		System.out.println(clock.getTime()+" : Manager is answering the team lead "+employeeWithQuestion.getName()+"'s question.");
 		
 		try {
 			this.sleep(100);
@@ -112,16 +120,16 @@ public class Manager extends Thread {
 		int selector = generator.nextInt(n);
 		
 		if (selector == 0){
-			System.out.println(clock.getTime()+": The manager is browsing reddit.");
+			System.out.println(clock.getTime()+" : The manager is browsing reddit.");
 		}
 		else if (selector == 1){
-			System.out.println(clock.getTime()+": The manager is doing actual work, looking at administrative data.");
+			System.out.println(clock.getTime()+" : The manager is doing actual work, looking at administrative data.");
 		}
 		else if (selector == 2){
-			System.out.println(clock.getTime()+": Manager is twirling his pen.");
+			System.out.println(clock.getTime()+" : Manager is twirling his pen.");
 		}
 		else if (selector == 3){
-			System.out.println(clock.getTime()+": Manager is finishing up some work, while redditing.");
+			System.out.println(clock.getTime()+" : Manager is finishing up some work, while redditing.");
 		}
 		
 	}
@@ -142,9 +150,9 @@ public class Manager extends Thread {
 	public void run(){
 		busy = true;
 		//Manager arrives at 8:00 each day
-		System.out.println(clock.getTime()+": Manager arrives.");
+		System.out.println(clock.getTime()+" : Manager arrives.");
 		//Manager does planning and sleeps until all team leads arrive in his office
-		System.out.println(clock.getTime()+": Manager is doing some planning work as he waits "
+		System.out.println(clock.getTime()+" : Manager is doing some planning work as he waits "
 						+ "for the team leads to arrive.");
 		while( numLeads != 0 ){
 			try {
@@ -197,7 +205,7 @@ public class Manager extends Thread {
 		while( clock.getTimeMillis() < 5400){
 			answerQuestions();
 		}
-		System.out.println(clock.getTime()+": Manager has left.");
+		System.out.println(clock.getTime()+" : Manager has left.");
 	}
 
 

@@ -2,17 +2,37 @@ import java.util.Random;
 
 public class Employee extends Thread {
 	
+	private static volatile boolean conferenceRoomAvailable = true;
+	
 	private final int teamNumber;
 	// Employee number of 1 means team lead
 	private final int employeeNumber;
-	
+	private final Manager manager;
 	private final Clock clock;
+	private Employee teamLead;
+	private boolean busy = false;
+	private volatile int numDevelopers = 3;
 	
-	public Employee(int team, int num, Clock clock){
+	private boolean teamQuestion = false;
+	
+	/**
+	 * Constructor for team leads as they will be their own team lead
+	 */
+	public Employee(int team, int num, Manager manager, Clock clock){
 		super(""+team+num);
-		teamNumber = team;
-		employeeNumber = num;
+		this.teamNumber = team;
+		this.employeeNumber = num;
+		this.manager = manager;
 		this.clock = clock;
+		this.teamLead = this;
+	}
+	
+	/**
+	 * Constructor for regular employees.
+	 */
+	public Employee(int team, int num, Employee teamLead, Manager manager, Clock clock){
+		this(team,num,manager,clock);
+		this.teamLead = teamLead;
 	}
 	
 	/**
@@ -22,44 +42,62 @@ public class Employee extends Thread {
 	 */
 	public boolean answerQuestion(){
 		Random r = new Random(2);
-		if(r.nextInt() == 1)
-			return true;
-		else
+		if(r.nextInt() == 1){
+			return true;			
+		}
+		else{
+			teamQuestion = true;
 			return false;
+		}
 	}
 	
 	/**
-	 * Represents the Employee arriving at the office or a meeting.
-	 * @param range - Range of minutes Employee can arrive at (e.g Employee can arrive at anytime within 30min)
+	 * Represents the Employee arriving at the office 
 	 */
-	 public void arrive(int range){
-	 	//Employee can arrive at any time between 8:00 and 8:30
-		Random r = new Random(range);
+	 private void arrive(){
+	 	//Employee can arrive at any time between 8:00 and 8:30		
+		try {
+			sleep( (long) (Math.random() * 300) );
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		
-		this.wait( (r.nextInt() + 1)*10 ); // +1 to account for 0
+		System.out.println(clock.getTime()+" : Developer "+getName()+" has arrived at work.");
 	 } 
 	
-	/** 
-	 * Represents a team lead knocking on the Manager's door at the start of the day and entering the room. 
-	 * Will check if the Employee is a team lead by checking their employeeNumber.
-	 */
-	public void knockOnDoor(int employeeNumber){
-		if( employeeNumber == 1 ){}
-			//manager.knockOnDoor(teamNumber);
-	}	
 	
-	public int lunchBreak(){
-		Random r = new Random(3000);
-		return (3000 + r.nextInt());
+	private void lunchBreak(){
+		Random r = new Random(300);
+		System.out.println(clock.getTime()+" : Developer "+getName()+" goes out for lunch.");
+		try {
+			sleep(300 + r.nextInt());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	/**
-	 * Represents the Employee asking the Manager a question when they
-	 * unable to successfully answer a question. Enters their question into a queue.
-	 * */
-	public void requestAnswer(){
-		//Employee e = new Employee
+	private void knockOnDoor(){
+		System.out.println(clock.getTime() + " : Developer " + getName()+ " has arrived at the team stand up meeting");
+		numDevelopers -= 1; //Subtract 1 for number of developers waiting for.
+		try {
+			Thread.currentThread().wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private synchronized void teamStandUpMeeting(){
+		conferenceRoomAvailable = false;
 		
+		System.out.println(clock.getTime()+" : Team"+teamNumber+" is having a standup meeting.");
+		try {
+			this.sleep(150);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		notifyAll();
+		
+		conferenceRoomAvailable = true;
 	}
 	
 	
@@ -71,12 +109,110 @@ public class Employee extends Thread {
 		}
 	}
 	
+	private boolean askQuestion(){
+		if(teamQuestion || Math.random() < .05){
+			teamQuestion = false;
+			return true;
+		}
+		return false;
+	}
+	
 	private void runAsTeamLead(){
+		//Arrive
+		arrive();
+		int startTime = clock.getTimeMillis();
 		
+		busy = true;
+		//Stand-up-meeting
+		manager.knockOnDoor(teamNumber);
+		
+		//Team based stand-up-meeting
+		while(numDevelopers > 0){
+			try {
+				this.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		teamStandUpMeeting();
+		busy = false;
+
+		while(clock.getTimeMillis() < 2400){
+			if(askQuestion()){
+				manager.askQuestion();
+			}else{
+				// Do actual work
+			}
+		}
+		
+		busy = true;
+		//Lunch
+		lunchBreak();
+		busy = false;
+		
+		while(clock.getTimeMillis() < 4800){
+			if(askQuestion()){
+				manager.askQuestion();
+			}else{
+				// Do actual work
+			}
+		}
+		
+		busy = true;
+		//Status meeting
+		busy = false;
+		
+		while(clock.getTimeMillis() < startTime+4800){
+			if(askQuestion()){
+				manager.askQuestion();
+			}else{
+				// Do actual work
+			}
+		}
+		
+		System.out.println(clock.getTime()+" : Developer "+getName()+" has left work.");
 	}
 	
 	private void runAsEmployee(){
+		//Arrive
+		arrive();
+		int startTime = clock.getTimeMillis();
+
+		knockOnDoor();
+
+		while(clock.getTimeMillis() < 2400){
+			if(askQuestion()){
+				if(teamLead.answerQuestion()){
+					System.out.println(clock.getTime()+" : Team Lead "+teamLead.getName()+" has answered Developer "+getName()+"'s question.");
+				}else{
+					
+				}
+			}else{
+				// Do actual work
+			}
+		}
 		
+		//Lunch
+		lunchBreak();
+		
+		while(clock.getTimeMillis() < 4800){
+			if(askQuestion()){
+				manager.askQuestion();
+			}else{
+				// Do actual work
+			}
+		}
+		
+		//Status meeting
+		while(clock.getTimeMillis() < startTime+4800){
+			if(askQuestion()){
+				manager.askQuestion();
+			}else{
+				// Do actual work
+			}
+		}
+		
+		System.out.println(clock.getTime()+" : Developer "+getName()+" has left work.");
 	}
 }
 
