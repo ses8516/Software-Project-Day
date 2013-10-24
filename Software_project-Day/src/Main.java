@@ -7,7 +7,7 @@ public class Main {
 		Clock clock = new Clock();
 		
 		Manager manager = new Manager(clock);
-		manager.start();
+		
 		
 		ArrayList<Employee> employees = new ArrayList<Employee>(12);
 		// Create Teams
@@ -22,10 +22,10 @@ public class Main {
 		}
 		
 		clock.start();
-//		manager.start();
+		manager.start();
 //		for(Employee e : employees){
 //			e.start();
 //		}
+		
 	}
-
 }

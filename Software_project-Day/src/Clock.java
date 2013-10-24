@@ -50,7 +50,7 @@ public class Clock extends Thread{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-//				System.out.println("Time is : " + getTime());
+//			System.out.println("Time is : " + getTime());
 //				System.out.println("Millis are : " + time);
 			}
 		}
